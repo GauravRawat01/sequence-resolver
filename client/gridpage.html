@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Sequence Resolver</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            .grid {
+                align-self: center;
+                align-content: center;
+                width:80%;
+                height:60%
+            }
+            .column {
+                float:left;
+                text-align: center;
+                align-items: center;
+                transition: transform .2s;
+                width: 12.5%;
+                padding:10px;
+                border: 2px;
+                border-color:black;
+            }
+            .column:hover{
+                color:white;
+                transform: scale(0.9);
+            }
+            .row:after{
+                content:"";
+                display:table;
+                clear:both;
+            }
+            @media screen and (max-width: 600px){
+                .column {
+                    width:100%
+                }
+            }
+        </style>
+    </head>
+
+    <body onload="fillgrid()" style="align-content:center">
+        <div id="grid" class ="grid">
+        </div>
+
+        <script src="./js/populate_grid.js"></script>
+    </body>
+
+</html>

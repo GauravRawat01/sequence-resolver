@@ -2,9 +2,9 @@ function fillgrid(){
     var content  = "";
     var count =0;
     for(var i=0; i<8; i++){
-        content = content + "<div id=\"row\"" + i + " class=\"row\"";
+        content = content + "<div id=\"row" + i + "\" class=\"row\">";
         for(var j=0; j<8; j++){
-            content = content + "<div id=\"column\""+j+" class=\"column\" onclick=\"clicked("+(++count)+")\" style=\"background-color:";
+            content = content + "<div id=\"column"+j+"\" class=\"column\" onclick=\"clicked("+(++count)+")\" style=\"background-color:";
             switch(count%10){
                 case 0 : content = content + "blue;\">";
                 break;
@@ -27,16 +27,17 @@ function fillgrid(){
                 case 9 : content = content + "grey;\">";
                 break;
             }
-            content = content + "<h1>" + count + "</h1>";
+            content = content + "<h1>" + (count) + "</h1>";
             content = content + "</div>";
         }
         content = content + "</div>"
     }
+    document.getElementById('grid').innerHTML = content;
 }
 
 function clicked(value){
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/addClick", true);
-    xhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-    xhttp.send("username:"+localStorage.getItem('username')+"&click_num"+value);
+    xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xhttp.send("username="+localStorage.getItem('username')+"&click_num="+value);
 }

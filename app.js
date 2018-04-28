@@ -39,36 +39,40 @@ eventEmitter.on('sendAlerts', sendAlertsToUsers);
 
 var checkForUnusualPattern = function checkForUnusualPattern(){
     console.log("Checking for unusual patterns");
-    var unsualPatterns = [];
+    var unusualPatterns = [];
     var latestCLicks = [];
     UnusualPatterns.getUnusualPatterns(function(err, patterns){
         if(err) throw err;
         unusualPatterns = patterns;
     })
     var maxlength =0;
-    for(var i=0; i< unusualPatterns.length; i++){
-        if(unusualPatterns[i].click_sequence.split(","),length > maxlength){
-            maxlength = unusualPatterns[i].click_sequence.split(","),length;
-        }
-    }
-    Clicks.getLatestClicks(maxlength, function(err, clicks){
-        if(err) throw err;
-        latestClicks = clicks;
-    })
-    for(var i =0; i< unusualPatterns.length; i++){
-        var currentLength = unusualPatterns[i].click_sequence.split(",").length;
-        var currentClickSequence = "";
-        for(var j=currentLength -1; j=0; j--){
-            if(j==0){
-                currentClickSequence = currentClickSequence + latestClicks[j].click_num + ",";
-            }else{
-                currentClickSequence = currentClickSequence + latestClicks[j].click_num;
+    if(unusualPatterns.length>0){
+        for(var i=0; i< unusualPatterns.length; i++){
+            if(unusualPatterns[i].click_sequence.split(","),length > maxlength){
+                maxlength = unusualPatterns[i].click_sequence.split(","),length;
             }
         }
-        if(currentClickSequence.localeCompare(unusualPatterns[i].click_sequence)){
-            // TODO ** Add the respective click enteries to the "unusualPatternClicks" array declared above.
-            eventEmitter.emit('sendAlerts');
+        Clicks.getLatestClicks(maxlength, function(err, clicks){
+            if(err) throw err;
+            latestClicks = clicks;
+        })
+        for(var i =0; i< unusualPatterns.length; i++){
+            var currentLength = unusualPatterns[i].click_sequence.split(",").length;
+            var currentClickSequence = "";
+            for(var j=currentLength -1; j=0; j--){
+                if(j==0){
+                    currentClickSequence = currentClickSequence + latestClicks[j].click_num + ",";
+                }else{
+                    currentClickSequence = currentClickSequence + latestClicks[j].click_num;
+                }
+            }
+            if(currentClickSequence.localeCompare(unusualPatterns[i].click_sequence)){
+                // TODO ** Add the respective click enteries to the "unusualPatternClicks" array declared above.
+                eventEmitter.emit('sendAlerts');
+            }
         }
+    }else{
+        console.log("No Unusual Patterns present");
     }
 }
 
@@ -88,7 +92,7 @@ app.post('/gridpage', function(req, res){
     console.log(req.body['uname']);
     Users.getUserByName(req.body['uname'], function(err, user){
         if(err){
-            res.sendFile('./register.html',{root:'./client'});
+            res.sendFile('/register.html',{root:'./client'});
         }
         if(user == []){
             console.log("Adding User");
@@ -117,7 +121,7 @@ app.post('/addClick', function(req, res){
         username: username,
         click_num: click_num
     }
-    Clicks.addClick(clickToAdd, function(req, res){
+    Clicks.addClick(clickToAdd, function(err, callback){
         if(err) throw err;
         console.log("Click Registered");
         eventEmitter.emit('checkForUnusualPattern');
@@ -147,6 +151,7 @@ app.get('./unusualpatterns', function(req, res){
 })
 
 // Port Configuration
-app.listen(8080, function(){
+app.listen(8080, function(err){
+    if(err) throw err;
     console.log("Application listening on port 8080");
 })
